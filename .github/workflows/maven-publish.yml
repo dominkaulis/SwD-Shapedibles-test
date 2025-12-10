@@ -27,6 +27,19 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
+    - name: Generate Classpath
+      run: mvn dependency:build-classpath -Dmdep.outputFile=cp.txt
+
+    - name: Setup OpenJML
+      run: |
+        wget https://github.com/OpenJML/OpenJML/releases/download/21.0.2/openjml-ubuntu-22.04-21.0.2.zip -O openjml.zip
+        unzip openjml.zip -d openjml-dist
+        chmod +x openjml-dist/openjml
+
+    - name: Run JML Static Analysis on Model
+      run: |
+        ./openjml-dist/openjml -dir SwD-Shapedibles/src/main/java/model -classpath $(cat cp.txt)
+
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
