@@ -30,9 +30,11 @@ jobs:
     - name: Generate Classpath
       run: mvn dependency:build-classpath -Dmdep.outputFile=cp.txt
 
-    - name: Setup OpenJML
+    - name: Setup OpenJML (Auto-Download)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        wget https://github.com/OpenJML/OpenJML/releases/download/0.22.1/openjml-ubuntu-22.04-0.22.1.zip -O openjml.zip
+        gh release download --repo OpenJML/OpenJML --pattern "openjml-ubuntu-*.zip" --output openjml.zip
         unzip openjml.zip -d openjml-dist
         chmod +x openjml-dist/openjml
 
